@@ -1,70 +1,64 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, StatusBar } from 'react-native';
+import React, { useRef, useEffect } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StatusBar,
+  Animated,
+} from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../App';
 import { LinearGradient } from 'expo-linear-gradient';
+import LottieView from 'lottie-react-native';
+import GlobalStyles from '../styles/GlobalStyles';
+import { Colors } from '../styles/Theme';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Welcome'>;
 
 const WelcomeScreen: React.FC<Props> = ({ navigation }) => {
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 1000,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
   return (
-    <LinearGradient
-      colors={['#0f2027', '#203a43', '#2c5364']}
-      style={styles.container}
-    >
-      <StatusBar barStyle="light-content" />
-      <View style={styles.innerContainer}>
-        <Text style={styles.heading}>🚨 CERA</Text>
-        <Text style={styles.subheading}>
-          Contextual Emergency Responder Assistant
+    <LinearGradient colors={Colors.backgroundGradient} style={GlobalStyles.container}>
+      <StatusBar barStyle="dark-content" />
+
+      <View style={GlobalStyles.animationContainer}>
+        <LottieView
+          source={require('../assets/animations/welcome_page.json')}
+          autoPlay
+          loop
+          style={GlobalStyles.lottie}
+        />
+      </View>
+
+      <Animated.View style={{ ...GlobalStyles.innerContainer, opacity: fadeAnim }}>
+        <Text style={GlobalStyles.heading}>CERA</Text>
+        <Text style={GlobalStyles.subheading}>
+          Smart Emergency Guidance at Your Fingertips
+        </Text>
+        <Text style={GlobalStyles.description}>
+          CERA uses AI and contextual awareness to guide you through critical
+          situations like fire, flood, intrusion, or medical emergencies —
+          tailored to your exact environment.
         </Text>
 
         <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('Home')}
+          style={GlobalStyles.button}
+          onPress={() => navigation.navigate('Register')}
         >
-          <Text style={styles.buttonText}>Get Started</Text>
+          <Text style={GlobalStyles.buttonText}>Get Started</Text>
         </TouchableOpacity>
-      </View>
+      </Animated.View>
     </LinearGradient>
   );
 };
 
 export default WelcomeScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  innerContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 32,
-  },
-  heading: {
-    fontSize: 42,
-    fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 12,
-    textAlign: 'center',
-  },
-  subheading: {
-    fontSize: 18,
-    color: '#ddd',
-    textAlign: 'center',
-    marginBottom: 60,
-  },
-  button: {
-    backgroundColor: '#ff3c3c',
-    paddingVertical: 14,
-    paddingHorizontal: 40,
-    borderRadius: 30,
-    elevation: 5,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-});
